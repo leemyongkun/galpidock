@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GalpiDock - Customizable New Tab Dashboard</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 640px;
+      text-align: center;
+    }
+    .logo {
+      width: 96px;
+      height: 96px;
+      margin-bottom: 1.5rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .tagline {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      text-align: left;
+    }
+    .feature {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .feature-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    .feature-desc {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.4;
+    }
+    .cta {
+      display: inline-block;
+      background: #4285f4;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .cta:hover { background: #3367d6; }
+    footer {
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">G</div>
+    <h1>GalpiDock</h1>
+    <p class="tagline">
+      Customizable New Tab Dashboard for Chrome & Whale<br>
+      with widgets, glass morphism, and drag-and-drop layout.
+    </p>
+    <div class="features">
+      <div class="feature">
+        <div class="feature-title">Clock & Weather</div>
+        <div class="feature-desc">10 clock designs, real-time weather with location detection</div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">Google Calendar</div>
+        <div class="feature-desc">OAuth integration, event alerts, day/week/month views</div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">Bookmarks & Memo</div>
+        <div class="feature-desc">Bookmark folders, pinned sites, multi-memo groups with backup</div>
+      </div>
+      <div class="feature">
+        <div class="feature-title">Glass Morphism</div>
+        <div class="feature-desc">Per-widget style customization with backdrop blur and themes</div>
+      </div>
+    </div>
+    <a class="cta" href="https://chromewebstore.google.com/detail/galpidock/YOUR_EXTENSION_ID">Install from Chrome Web Store</a>
+    <footer>&copy; 2026 GalpiDock</footer>
+  </div>
+</body>
+</html>
