@@ -32,13 +32,10 @@
       var appId = e.data.appId;
       document.getElementById("status").style.display = "none";
 
-      var docsView = new google.picker.DocsView()
+      var docsView = new google.picker.DocsView(google.picker.ViewId.DOCS)
         .setIncludeFolders(true)
-        .setSelectFolderEnabled(false);
-
-      var folderView = new google.picker.DocsView()
-        .setMimeTypes("application/vnd.google-apps.folder")
-        .setSelectFolderEnabled(true);
+        .setSelectFolderEnabled(false)
+        .setEnableDrives(true);
 
       var picker = new google.picker.PickerBuilder()
         .setAppId(appId)
@@ -46,8 +43,9 @@
         .setDeveloperKey(apiKey)
         .setSize(window.innerWidth, window.innerHeight)
         .addView(docsView)
-        .addView(folderView)
         .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+        .enableFeature(google.picker.Feature.SUPPORT_DRIVES)
+        .enableFeature(google.picker.Feature.NAV_HIDDEN, false)
         .setCallback(function(data) {
           if (data.action === google.picker.Action.PICKED) {
             var files = data.docs.map(function(doc) {
