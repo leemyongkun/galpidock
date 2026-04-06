@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <title>GalpiDock Drive Picker</title>
   <style>
-    body { margin: 0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: -apple-system, sans-serif; color: #ccc; }
-    .loading { text-align: center; font-size: 14px; opacity: 0.6; }
+    body { margin: 0; background: #1a1a2e; font-family: -apple-system, sans-serif; color: #ccc; overflow: hidden; }
+    .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; opacity: 0.6; }
   </style>
 </head>
 <body>
@@ -44,6 +44,7 @@
         .setAppId(appId)
         .setOAuthToken(token)
         .setDeveloperKey(apiKey)
+        .setSize(window.innerWidth, window.innerHeight)
         .addView(docsView)
         .addView(folderView)
         .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
