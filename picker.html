@@ -6,12 +6,20 @@
   <style>
     body { margin: 0; background: #1a1a2e; font-family: -apple-system, sans-serif; color: #ccc; overflow: hidden; }
     .loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; opacity: 0.6; }
+    .toolbar { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 9999; background: #2a2a3e; padding: 6px 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .toolbar label { font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; user-select: none; }
+    .toolbar input[type="checkbox"] { cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="loading" id="status">Loading Google Drive Picker...</div>
+  <div class="toolbar" id="toolbar">
+    <label><input type="checkbox" id="ownedByMe"> Show only my files</label>
+  </div>
   <script>
-    let pickerReady = false;
+    var pickerReady = false;
+    var pickerConfig = null;
+    var currentPicker = null;
 
     function onGapiLoad() {
       gapi.load("picker", function() {
@@ -23,18 +31,16 @@
       });
     }
 
-    window.addEventListener("message", function(e) {
-      if (!e.data || e.data.type !== "open-picker") return;
-      if (!pickerReady) return;
-
-      var token = e.data.token;
-      var apiKey = e.data.apiKey;
-      var appId = e.data.appId;
-      document.getElementById("status").style.display = "none";
+    function buildPicker(config, ownedOnly) {
+      if (currentPicker) {
+        currentPicker.setVisible(false);
+        currentPicker.dispose();
+      }
 
       var myDriveView = new google.picker.DocsView()
         .setIncludeFolders(true)
         .setSelectFolderEnabled(false)
+        .setOwnedByMe(ownedOnly)
         .setLabel("My Drive");
 
       var sharedDriveView = new google.picker.DocsView()
@@ -43,10 +49,10 @@
         .setEnableDrives(true)
         .setLabel("Shared Drives");
 
-      var picker = new google.picker.PickerBuilder()
-        .setAppId(appId)
-        .setOAuthToken(token)
-        .setDeveloperKey(apiKey)
+      var builder = new google.picker.PickerBuilder()
+        .setAppId(config.appId)
+        .setOAuthToken(config.token)
+        .setDeveloperKey(config.apiKey)
         .setSize(window.innerWidth, window.innerHeight)
         .addView(myDriveView)
         .addView(sharedDriveView)
@@ -73,10 +79,28 @@
             }
             window.close();
           }
-        })
-        .build();
+        });
 
-      picker.setVisible(true);
+      currentPicker = builder.build();
+      currentPicker.setVisible(true);
+    }
+
+    document.getElementById("ownedByMe").addEventListener("change", function() {
+      if (pickerConfig) {
+        buildPicker(pickerConfig, this.checked);
+      }
+    });
+
+    window.addEventListener("message", function(e) {
+      if (!e.data || e.data.type !== "open-picker") return;
+      if (!pickerReady) return;
+
+      pickerConfig = { token: e.data.token, apiKey: e.data.apiKey, appId: e.data.appId };
+      document.getElementById("status").style.display = "none";
+      document.getElementById("toolbar").style.display = "block";
+
+      var ownedOnly = document.getElementById("ownedByMe").checked;
+      buildPicker(pickerConfig, ownedOnly);
     });
   </script>
   <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()"></script>
