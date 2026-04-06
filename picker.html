@@ -10,12 +10,11 @@
 </head>
 <body>
   <div class="loading" id="status">Loading Google Drive Picker...</div>
-  <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()"></script>
   <script>
     let pickerReady = false;
 
     function onGapiLoad() {
-      gapi.load("picker", () => {
+      gapi.load("picker", function() {
         pickerReady = true;
         document.getElementById("status").textContent = "Waiting for configuration...";
         if (window.opener) {
@@ -24,39 +23,43 @@
       });
     }
 
-    window.addEventListener("message", (e) => {
+    window.addEventListener("message", function(e) {
       if (!e.data || e.data.type !== "open-picker") return;
       if (!pickerReady) return;
 
-      const { token, apiKey, appId } = e.data;
+      var token = e.data.token;
+      var apiKey = e.data.apiKey;
+      var appId = e.data.appId;
       document.getElementById("status").style.display = "none";
 
-      const docsView = new google.picker.DocsView()
+      var docsView = new google.picker.DocsView()
         .setIncludeFolders(true)
         .setSelectFolderEnabled(false);
 
-      const folderView = new google.picker.DocsView()
+      var folderView = new google.picker.DocsView()
         .setMimeTypes("application/vnd.google-apps.folder")
         .setSelectFolderEnabled(true);
 
-      const picker = new google.picker.PickerBuilder()
+      var picker = new google.picker.PickerBuilder()
         .setAppId(appId)
         .setOAuthToken(token)
         .setDeveloperKey(apiKey)
         .addView(docsView)
         .addView(folderView)
         .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
-        .setCallback((data) => {
+        .setCallback(function(data) {
           if (data.action === google.picker.Action.PICKED) {
-            const files = data.docs.map((doc) => ({
-              id: doc.id,
-              name: doc.name,
-              mimeType: doc.mimeType,
-              iconUrl: doc.iconUrl,
-              url: doc.url
-            }));
+            var files = data.docs.map(function(doc) {
+              return {
+                id: doc.id,
+                name: doc.name,
+                mimeType: doc.mimeType,
+                iconUrl: doc.iconUrl,
+                url: doc.url
+              };
+            });
             if (window.opener) {
-              window.opener.postMessage({ type: "picker-result", files }, "*");
+              window.opener.postMessage({ type: "picker-result", files: files }, "*");
             }
             window.close();
           } else if (data.action === google.picker.Action.CANCEL) {
@@ -71,5 +74,6 @@
       picker.setVisible(true);
     });
   </script>
+  <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()"></script>
 </body>
 </html>
