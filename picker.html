@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GalpiDock Drive Picker</title>
+  <style>
+    body { margin: 0; background: #1a1a2e; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: -apple-system, sans-serif; color: #ccc; }
+    .loading { text-align: center; font-size: 14px; opacity: 0.6; }
+  </style>
+</head>
+<body>
+  <div class="loading" id="status">Loading Google Drive Picker...</div>
+  <script src="https://apis.google.com/js/api.js" onload="onGapiLoad()"></script>
+  <script>
+    let pickerReady = false;
+
+    function onGapiLoad() {
+      gapi.load("picker", () => {
+        pickerReady = true;
+        document.getElementById("status").textContent = "Waiting for configuration...";
+        if (window.opener) {
+          window.opener.postMessage({ type: "picker-ready" }, "*");
+        }
+      });
+    }
+
+    window.addEventListener("message", (e) => {
+      if (!e.data || e.data.type !== "open-picker") return;
+      if (!pickerReady) return;
+
+      const { token, apiKey, appId } = e.data;
+      document.getElementById("status").style.display = "none";
+
+      const docsView = new google.picker.DocsView()
+        .setIncludeFolders(true)
+        .setSelectFolderEnabled(false);
+
+      const folderView = new google.picker.DocsView()
+        .setMimeTypes("application/vnd.google-apps.folder")
+        .setSelectFolderEnabled(true);
+
+      const picker = new google.picker.PickerBuilder()
+        .setAppId(appId)
+        .setOAuthToken(token)
+        .setDeveloperKey(apiKey)
+        .addView(docsView)
+        .addView(folderView)
+        .enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+        .setCallback((data) => {
+          if (data.action === google.picker.Action.PICKED) {
+            const files = data.docs.map((doc) => ({
+              id: doc.id,
+              name: doc.name,
+              mimeType: doc.mimeType,
+              iconUrl: doc.iconUrl,
+              url: doc.url
+            }));
+            if (window.opener) {
+              window.opener.postMessage({ type: "picker-result", files }, "*");
+            }
+            window.close();
+          } else if (data.action === google.picker.Action.CANCEL) {
+            if (window.opener) {
+              window.opener.postMessage({ type: "picker-cancel" }, "*");
+            }
+            window.close();
+          }
+        })
+        .build();
+
+      picker.setVisible(true);
+    });
+  </script>
+</body>
+</html>
